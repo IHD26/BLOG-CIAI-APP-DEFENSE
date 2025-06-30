@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Supprimer l'article - CSEGS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- En-tête -->
+            <div class="mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'blog:home' %}">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'blog:article_list' %}">Publications</a></li>
+                        <li class="breadcrumb-item"><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Supprimer</li>
+                    </ol>
+                </nav>
+
+                <h1 class="h2 mb-3">Supprimer l'article</h1>
+            </div>
+
+            <!-- Message de confirmation -->
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirmation de suppression
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Êtes-vous sûr de vouloir supprimer l'article <strong>"{{ article.title }}"</strong> ?
+                    </p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Cette action est irréversible. Toutes les données associées à cet article seront définitivement supprimées.
+                    </div>
+
+                    <!-- Informations sur l'article -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Détails de l'article</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li>
+                                    <i class="far fa-calendar-alt me-2"></i>
+                                    Publié le : {{ article.published_at|date:"d/m/Y" }}
+                                </li>
+                                <li>
+                                    <i class="far fa-folder me-2"></i>
+                                    Catégorie : {{ article.category.name }}
+                                </li>
+                                <li>
+                                    <i class="far fa-user me-2"></i>
+                                    Auteur : {{ article.author.get_full_name|default:article.author.username }}
+                                </li>
+                                {% if article.tags.all %}
+                                    <li>
+                                        <i class="fas fa-tags me-2"></i>
+                                        Tags : 
+                                        {% for tag in article.tags.all %}
+                                            <span class="badge bg-secondary">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Formulaire de suppression -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ article.get_absolute_url }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i>Confirmer la suppression
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

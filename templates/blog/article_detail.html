@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ article.title }} - CSEGS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Article principal -->
+        <div class="col-lg-8">
+            <!-- Fil d'Ariane -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'blog:home' %}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'blog:article_list' %}">Publications</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'blog:article_list_by_category' article.category.slug %}">{{ article.category.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+                </ol>
+            </nav>
+
+            <!-- En-tête de l'article -->
+            <article class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h1 class="h2 mb-3">{{ article.title }}</h1>
+                    
+                    <!-- Métadonnées -->
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-user text-primary me-2"></i>
+                            <span>{{ article.author.get_full_name|default:article.author.username }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-calendar-alt text-primary me-2"></i>
+                            <span>{{ article.published_at|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-folder text-primary me-2"></i>
+                            <a href="{% url 'blog:article_list_by_category' article.category.slug %}" class="text-decoration-none">
+                                {{ article.category.name }}
+                            </a>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-eye text-primary me-2"></i>
+                            <span>{{ article_stats.views }} vues</span>
+                        </div>
+                    </div>
+
+                    <!-- Image principale -->
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" class="img-fluid rounded mb-4">
+                    {% endif %}
+
+                    <!-- Contenu -->
+                    <div class="article-content mb-4">
+                        {{ article.content|safe }}
+                    </div>
+
+                    <!-- Tags -->
+                    {% if article.tags.all %}
+                        <div class="mb-4">
+                            <h5 class="h6 mb-2">Tags :</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for tag in article.tags.all %}
+                                    <a href="{% url 'blog:article_list_by_tag' tag.slug %}" class="badge bg-secondary text-decoration-none">
+                                        {{ tag.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Actions de l'auteur -->
+                    {% if user == article.author %}
+                        <div class="d-flex gap-2 mb-4">
+                            <a href="{% url 'blog:article_update' article.slug %}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                            <a href="{% url 'blog:article_delete' article.slug %}" class="btn btn-outline-danger">
+                                <i class="fas fa-trash-alt me-2"></i>Supprimer
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Partage -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="h6 mb-3">Partager cet article :</h5>
+                            <div class="d-flex gap-2">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                                   class="btn btn-outline-primary" target="_blank">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ article.title }}" 
+                                   class="btn btn-outline-info" target="_blank">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ article.title }}" 
+                                   class="btn btn-outline-secondary" target="_blank">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <button class="btn btn-outline-dark" onclick="copyToClipboard('{{ request.build_absolute_uri }}')">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Articles similaires -->
+            {% if similar_articles %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-newspaper me-2"></i>
+                            Articles similaires
+                        </h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for similar in similar_articles %}
+                            <a href="{{ similar.get_absolute_url }}" class="list-group-item list-group-item-action">
+                                <h6 class="mb-1">{{ similar.title }}</h6>
+                                <small class="text-muted">{{ similar.published_at|date:"d/m/Y" }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Catégories populaires -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-folder me-2"></i>
+                        Catégories populaires
+                    </h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for category in popular_categories %}
+                        <a href="{% url 'blog:article_list_by_category' category.slug %}" 
+                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            {{ category.name }}
+                            <span class="badge bg-primary rounded-pill">{{ category.article_count }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Tags populaires -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tags me-2"></i>
+                        Tags populaires
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in popular_tags %}
+                            <a href="{% url 'blog:article_list_by_tag' tag.slug %}" 
+                               class="badge bg-secondary text-decoration-none">
+                                {{ tag.name }}
+                                <span class="badge bg-light text-dark ms-1">{{ tag.article_count }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert('Lien copié dans le presse-papiers !');
+        }).catch(function(err) {
+            console.error('Erreur lors de la copie : ', err);
+        });
+    }
+</script>
+{% endblock %}

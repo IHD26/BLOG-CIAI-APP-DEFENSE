@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <style>
+        .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .chat-box {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-bottom-left-radius: 10px;
+        }
+
+        .chat-input button {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-bottom-right-radius: 10px;
+        }
+
+        .sent, .received {
+            padding: 6px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+
+        .sent {
+            background: #007bff;
+            color: white;
+            text-align: right;
+        }
+
+        .received {
+            background: #e9ecef;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <button class="chat-btn" onclick="toggleChat()">💬</button>
+
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+            Chat avec <span id="receiverName">{{ request.user.username }}</span>
+            <button style="float:right; background:none; color:white; border:none;" onclick="toggleChat()">✖</button>
+        </div>
+        <div class="chat-messages" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Votre message..." />
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const username = prompt("Nom de l'utilisateur avec qui discuter ?");
+        const chatBox = document.getElementById('chatBox');
+        const messagesDiv = document.getElementById('messages');
+
+        function toggleChat() {
+            chatBox.style.display = chatBox.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function fetchMessages() {
+            fetch(`/chat/get/${username}/`)
+                .then(response => response.json())
+                .then(data => {
+                    messagesDiv.innerHTML = '';
+                    data.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.classList.add(msg.sender === "{{ request.user.username }}" ? 'sent' : 'received');
+                        div.innerHTML = `<strong>${msg.sender}</strong>: ${msg.content}<br><small>${msg.timestamp}</small>`;
+                        messagesDiv.appendChild(div);
+                    });
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value;
+            if (!content.trim()) return;
+
+            fetch('/chat/send/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ content, receiver: username })
+            }).then(() => {
+                input.value = '';
+                fetchMessages();
+            });
+        }
+
+        setInterval(fetchMessages, 2000);
+    </script>
+</body>
+</html>

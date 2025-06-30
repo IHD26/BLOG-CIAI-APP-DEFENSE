@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profil - CSEGS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- En-tête -->
+        <div class="col-12 mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'blog:home' %}">Accueil</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Profil</li>
+                </ol>
+            </nav>
+
+            <h1 class="h2 mb-3">Mon Profil</h1>
+        </div>
+
+        <!-- Informations du profil -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <!-- Avatar -->
+                    <div class="mb-4">
+                        {% if user.userprofile.avatar %}
+                            <img src="{{ user.userprofile.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}" 
+                                 class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" 
+                                 style="width: 150px; height: 150px; font-size: 3rem;">
+                                {{ user.get_full_name|default:user.username|make_list|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Informations utilisateur -->
+                    <h2 class="h4 mb-3">{{ user.get_full_name|default:user.username }}</h2>
+                    <p class="text-muted mb-4">{{ user.userprofile.bio|default:"Aucune biographie" }}</p>
+
+                    <!-- Statistiques -->
+                    <div class="row text-center mb-4">
+                        <div class="col">
+                            <h3 class="h5 mb-1">{{ published_articles_count }}</h3>
+                            <p class="text-muted small mb-0">Articles publiés</p>
+                        </div>
+                        <div class="col">
+                            <h3 class="h5 mb-1">{{ draft_articles_count }}</h3>
+                            <p class="text-muted small mb-0">Brouillons</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'blog:article_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Nouvel article
+                        </a>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-user-edit me-2"></i>Modifier le profil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Articles de l'utilisateur -->
+        <div class="col-lg-8">
+            <!-- Onglets -->
+            <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                        <i class="fas fa-check-circle me-2"></i>Publiés
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="drafts-tab" data-bs-toggle="tab" data-bs-target="#drafts" type="button" role="tab">
+                        <i class="fas fa-edit me-2"></i>Brouillons
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenu des onglets -->
+            <div class="tab-content" id="profileTabsContent">
+                <!-- Articles publiés -->
+                <div class="tab-pane fade show active" id="published" role="tabpanel">
+                    {% if published_articles %}
+                        <div class="list-group">
+                            {% for article in published_articles %}
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <h5 class="mb-1">
+                                            <a href="{{ article.get_absolute_url }}" class="text-decoration-none">{{ article.title }}</a>
+                                        </h5>
+                                        <small class="text-muted">{{ article.published_at|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted">{{ article.content|truncatewords:30 }}</p>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'blog:article_update' article.slug %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </a>
+                                        <a href="{% url 'blog:article_delete' article.slug %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt me-1"></i>Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Vous n'avez pas encore publié d'articles.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Brouillons -->
+                <div class="tab-pane fade" id="drafts" role="tabpanel">
+                    {% if draft_articles %}
+                        <div class="list-group">
+                            {% for article in draft_articles %}
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <h5 class="mb-1">{{ article.title }}</h5>
+                                        <small class="text-muted">Dernière modification : {{ article.updated_at|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted">{{ article.content|truncatewords:30 }}</p>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'blog:article_update' article.slug %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i>Modifier
+                                        </a>
+                                        <a href="{% url 'blog:article_delete' article.slug %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt me-1"></i>Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Vous n'avez pas de brouillons.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de modification du profil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifier le profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" id="profileForm">
+                    {% csrf_token %}
+                    {{ profile_form|crispy }}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" form="profileForm" class="btn btn-primary">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Prévisualisation de l'avatar
+    document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.style.maxWidth = '100%';
+                preview.style.marginTop = '1rem';
+                preview.style.borderRadius = '50%';
+                preview.style.width = '150px';
+                preview.style.height = '150px';
+                preview.style.objectFit = 'cover';
+                
+                const container = document.querySelector('input[type="file"]').parentElement;
+                const existingPreview = container.querySelector('img');
+                if (existingPreview) {
+                    container.removeChild(existingPreview);
+                }
+                container.appendChild(preview);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Accueil - CIAI{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<!-- Hero Section -->
+<div class="hero-section text-white py-5" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://www.defense.gouv.fr/sites/default/files/styles/actualite_visuel_principal/public/2023-11/20231120_dia_satellite_terre_armee.jpg?itok=z4py-M1W'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES</h1>
+                <p class="lead mb-4">Découvrez nos analyses et publications sur la défense et la sécurité dans le monde.</p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{% url 'blog:article_list' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-newspaper me-2"></i>Voir nos publications
+                    </a>
+                    <a href="{% url 'blog:contact' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Contactez-nous
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="https://vision.esa.int/files/2023/05/ESA_acts_to_protect_government_data_image-scaled.jpg" alt="ESA Image" class="img-fluid rounded shadow" style="width: 100%; max-height: 650px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Derniers articles -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="h3 mb-4">Dernières publications</h2>
+        <div class="row">
+            {% for article in latest_articles %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        {% if article.image %}
+                            <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ article.get_absolute_url }}" class="text-decoration-none text-dark">{{ article.title }}</a>
+                            </h5>
+                            <p class="card-text text-muted">
+                                <small>
+                                    <i class="far fa-calendar-alt me-1"></i>{{ article.created_at|date:"d/m/Y" }}
+                                    <i class="far fa-user ms-2 me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                                </small>
+                            </p>
+                            <p class="card-text">{{ article.content|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-end">
+                            <a href="{{ article.get_absolute_url }}" class="btn btn-outline-primary btn-sm">Lire la suite</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'blog:article_list' %}" class="btn btn-outline-primary btn-lg">
+                Voir toutes les publications
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Catégories principales -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="h3 mb-4">Nos catégories</h2>
+        <div class="row g-4">
+            {% for category in main_categories %}
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm border-0">
+                        {% if category.name == "Informatique-Developpement web" %}
+                            <img src="https://th.bing.com/th/id/OIP.9p7TY688-KI11Ttq-9qYPgHaFj?rs=1&pid=ImgDetMain" class="card-img-top" alt="Développement web">
+                        {% elif category.name == "Mathematiques" %}
+                            <img src="https://th.bing.com/th/id/OIP.kMzd1222OUBj8Yn-_pH7DQHaEo?rs=1&pid=ImgDetMain" class="card-img-top" alt="Mathématiques">
+                        {% elif category.name == "STRATEGIE SPATIALE" %}
+                            <img src="https://afritech.tech/wp-content/uploads/2023/10/lancement-GAINDESAT-satellite-senegal-afritech-1-570x380.jpeg" class="card-img-top" alt="Stratégie spatiale">
+                        {% else %}
+                            <img src="{% static 'img/default-category.jpg' %}" class="card-img-top" alt="{{ category.name }}">
+                        {% endif %}
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <p class="card-text text-muted">{{ category.article_count }} article(s)</p>
+                        </div>
+                        <a href="{% url 'blog:category_detail' category.slug %}" class="stretched-link"></a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Tags populaires -->
+{% if popular_tags %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="h3 mb-4">Tags populaires</h2>
+        <div class="d-flex flex-wrap gap-2">
+            {% for tag in popular_tags %}
+                <a href="{% url 'blog:tag_detail' tag.slug %}" class="badge bg-primary text-white text-decoration-none px-3 py-2 fs-6 rounded-pill">
+                    #{{ tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="h3 mb-4">Rejoignez notre communauté</h2>
+        <p class="lead mb-4">Restez informé de nos dernières publications et analyses sur la défense et la sécurité.</p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <a href="https://www.facebook.com/ibrahimafreshii.dieng" target="_blank" class="btn btn-light shadow-sm">
+                <i class="fab fa-facebook-f me-2"></i>Facebook
+            </a>
+            <a href="#" class="btn btn-light shadow-sm">
+                <i class="fab fa-twitter me-2"></i>Twitter
+            </a>
+            <a href="https://www.linkedin.com/in/ibrahima-hanifan-dieng-720b3b213/" target="_blank" class="btn btn-light shadow-sm">
+                <i class="fab fa-linkedin-in me-2"></i>LinkedIn
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

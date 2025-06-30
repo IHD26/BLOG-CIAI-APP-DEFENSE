@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Publications - CSEGS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- En-tête de la page -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h2 mb-3">Publications</h1>
+            {% if category %}
+                <p class="text-muted">Catégorie : {{ category.name }}</p>
+            {% elif tag %}
+                <p class="text-muted">Tag : {{ tag.name }}</p>
+            {% elif search_query %}
+                <p class="text-muted">Résultats de recherche pour : "{{ search_query }}"</p>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <!-- Barre de recherche -->
+            <form action="{% url 'blog:article_list' %}" method="get" class="d-flex">
+                <input type="search" name="q" class="form-control me-2" placeholder="Rechercher..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar avec les catégories -->
+        <div class="col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Catégories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'blog:article_list' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
+                        Toutes les catégories
+                    </a>
+                    {% for cat in categories %}
+                        <a href="{% url 'blog:article_list_by_category' cat.slug %}" 
+                           class="list-group-item list-group-item-action {% if category.slug == cat.slug %}active{% endif %}">
+                            {{ cat.name }}
+                            <span class="badge bg-primary float-end">{{ cat.articles.count }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des articles -->
+        <div class="col-lg-9">
+            {% if articles %}
+                <div class="row">
+                    {% for article in articles %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                {% if article.image %}
+                                    <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{{ article.get_absolute_url }}" class="text-decoration-none text-dark">
+                                            {{ article.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-muted small">
+                                        <i class="far fa-calendar-alt me-1"></i>{{ article.published_at|date:"d/m/Y" }}
+                                        <i class="far fa-user ms-2 me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                                    </p>
+                                    <p class="card-text">{{ article.content|truncatewords:30 }}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ article.get_absolute_url }}" class="btn btn-primary btn-sm">
+                                            Lire la suite
+                                        </a>
+                                        {% if article.tags.all %}
+                                            <div class="tags">
+                                                {% for tag in article.tags.all %}
+                                                    <a href="{% url 'blog:article_list_by_tag' tag.slug %}" 
+                                                       class="badge bg-secondary text-decoration-none">
+                                                        #{{ tag.name }}
+                                                    </a>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    {% if search_query %}
+                        Aucun article ne correspond à votre recherche "{{ search_query }}".
+                    {% elif category %}
+                        Aucun article dans la catégorie "{{ category.name }}".
+                    {% elif tag %}
+                        Aucun article avec le tag "{{ tag.name }}".
+                    {% else %}
+                        Aucun article disponible pour le moment.
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

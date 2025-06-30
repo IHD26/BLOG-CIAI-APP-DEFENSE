@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Aviation Stratégique Militaire - Cartographie{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <style>
+        #map { height: 600px; width: 100%; margin-top: 1em; border: 2px solid #00d8ff; border-radius: 6px; }
+        #selectedZones {
+            margin-top: 1.5em;
+            background: #001a33;
+            padding: 1em;
+            border-radius: 6px;
+            max-height: 250px;
+            overflow-y: auto;
+            color: #eee;
+        }
+        .zone-item {
+            background: #003366;
+            padding: 0.7em 1em;
+            margin-bottom: 0.5em;
+            border-radius: 5px;
+            border-left: 5px solid #00d8ff;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        button#clearZones {
+            background-color: #ff3333;
+            color: #fff;
+            font-weight: 700;
+            margin-top: 1em;
+            width: 100%;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 4px;
+        }
+        button#exportGeoJSON {
+            background-color: #007acc;
+            color: #fff;
+            font-weight: 700;
+            margin-top: 0.5em;
+            width: 100%;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 4px;
+        }
+        #infoMessage {
+            margin-top: 1em;
+            font-style: italic;
+            color: #0099cc;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        #legend {
+            background: #001a33;
+            color: #00d8ff;
+            padding: 0.5em 1em;
+            border-radius: 6px;
+            font-size: 0.9em;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            box-shadow: 0 0 10px #00d8ffaa;
+            z-index: 1000;
+            max-width: 250px;
+        }
+        #legend h4 {
+            margin-top: 0;
+            margin-bottom: 0.5em;
+            font-weight: 700;
+        }
+        #legend div {
+            margin-bottom: 0.4em;
+            display: flex;
+            align-items: center;
+        }
+        #legend span.color-box {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 0.5em;
+            border-radius: 3px;
+            border: 1px solid #00d8ff;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <label for="missionType">Sélectionnez le type de mission :</label>
+    <select id="missionType" class="form-control">
+        <option value="">-- Choisir une mission --</option>
+        <option value="reconnaissance">Reconnaissance</option>
+        <option value="attaque">Attaque</option>
+        <option value="surveillance">Surveillance</option>
+        <option value="défense">Défense</option>
+        <option value="intervention">Intervention Rapide</option>
+    </select>
+
+    <h2>Carte des zones d'entraînement aérien</h2>
+    <div id="map"></div>
+
+    <button id="clearZones">Réinitialiser toutes les zones</button>
+    <button id="exportGeoJSON">Exporter zones (GeoJSON)</button>
+
+    <div id="infoMessage">Cliquez sur la carte pour définir 4 points formant une zone d'entraînement aérien.</div>
+
+    <div id="selectedZones">
+        <h3>Zones d'entraînement sélectionnées :</h3>
+        <ul id="zonesList"></ul>
+    </div>
+
+    <div id="legend">
+        <h4>Légende</h4>
+        <div><span class="color-box" style="background:#00d8ff;"></span> Zones d'entraînement</div>
+        <div><span class="color-box" style="background:#005f99;"></span> Surface couverte</div>
+        <div><span style="color:#00d8ff;">●</span> Points de contrôle</div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.10.0/src/leaflet.geometryutil.min.js"></script>
+    <script>
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        });
+
+        const openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: '© OpenTopoMap contributors'
+        });
+
+        const stamenTerrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg', {
+            maxZoom: 18,
+            attribution: 'Map tiles by Stamen Design, under CC BY 3.0.'
+        });
+
+        const map = L.map('map', {
+            center: [36.8, 10.2],
+            zoom: 7,
+            layers: [osm]
+        });
+
+        const baseMaps = {
+            "OpenStreetMap": osm,
+            "OpenTopoMap": openTopoMap,
+            "Terrain (Stamen)": stamenTerrain
+        };
+        L.control.layers(baseMaps).addTo(map);
+
+        const polygonStyle = {
+            color: '#00d8ff',
+            fillColor: '#005f99',
+            fillOpacity: 0.4,
+            weight: 3,
+            dashArray: '6, 4'
+        };
+
+        let selectedZones = [];
+        let tempPoints = [];
+        let tempMarkers = [];
+
+        const missionTypeSelect = document.getElementById('missionType');
+        const infoMessage = document.getElementById('infoMessage');
+        const zonesList = document.getElementById('zonesList');
+
+        function clearTempPoints() {
+            tempPoints = [];
+            tempMarkers.forEach(m => map.removeLayer(m));
+            tempMarkers = [];
+        }
+
+        function updateZonesList() {
+            zonesList.innerHTML = '';
+            selectedZones.forEach((zoneObj, idx) => {
+                const latlngs = zoneObj.polygon.getLatLngs()[0];
+                const area = L.GeometryUtil.geodesicArea(latlngs) / 1e6;
+
+                const li = document.createElement('li');
+                li.className = 'zone-item';
+                li.textContent = `Zone ${idx + 1} - Mission: ${zoneObj.mission} - Surface: ${area.toFixed(2)} km²`;
+                li.onclick = () => {
+                    map.fitBounds(zoneObj.polygon.getBounds());
+                    zoneObj.polygon.openPopup();
+                };
+                zonesList.appendChild(li);
+            });
+        }
+
+        function createPopupContent(zoneObj, area) {
+            return `<strong>Mission:</strong> ${zoneObj.mission}<br/>
+                    <strong>Surface:</strong> ${area.toFixed(2)} km²<br/>
+                    <em>Cliquer sur la liste pour recentrer</em>`;
+        }
+
+        map.on('click', function(e) {
+            if (!missionTypeSelect.value) {
+                alert('Veuillez sélectionner d’abord un type de mission.');
+                return;
+            }
+            tempPoints.push(e.latlng);
+
+            const marker = L.circleMarker(e.latlng, {
+                radius: 6, 
+                color: '#00d8ff', 
+                fillColor: '#00d8ff', 
+                fillOpacity: 0.7
+            }).addTo(map);
+            tempMarkers.push(marker);
+
+            if (tempPoints.length === 4) {
+                const polygon = L.polygon(tempPoints, polygonStyle).addTo(map);
+
+                const area = L.GeometryUtil.geodesicArea(tempPoints) / 1e6;
+                polygon.bindPopup(createPopupContent({mission: missionTypeSelect.value}, area));
+
+                selectedZones.push({ polygon, mission: missionTypeSelect.value });
+
+                clearTempPoints();
+                updateZonesList();
+                infoMessage.textContent = `Zone ajoutée pour la mission "${missionTypeSelect.options[missionTypeSelect.selectedIndex].text}". Cliquez pour commencer une nouvelle zone.`;
+            } else {
+                infoMessage.textContent = `Points sélectionnés: ${tempPoints.length} / 4. Continuez à cliquer pour définir la zone d'entraînement aérien.`;
+            }
+        });
+
+        document.getElementById('clearZones').addEventListener('click', () => {
+            selectedZones.forEach(z => map.removeLayer(z.polygon));
+            clearTempPoints();
+            selectedZones = [];
+            updateZonesList();
+            infoMessage.textContent = 'Toutes les zones ont été supprimées. Sélectionnez une mission et cliquez sur la carte pour ajouter une zone.';
+        });
+
+        document.getElementById('exportGeoJSON').addEventListener('click', () => {
+            if(selectedZones.length === 0){
+                alert('Aucune zone à exporter.');
+                return;
+            }
+            const geojsonFeatures = selectedZones.map((zoneObj, idx) => {
+                return {
+                    type: "Feature",
+                    properties: {
+                        mission: zoneObj.mission,
+                        id: idx + 1
+                    },
+                    geometry: zoneObj.polygon.toGeoJSON().geometry
+                };
+            });
+
+            const geojson = {
+                type: "FeatureCollection",
+                features: geojsonFeatures
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojson, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "zones_entrainement.geojson");
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+        });
+    </script>
+{% endblock %}

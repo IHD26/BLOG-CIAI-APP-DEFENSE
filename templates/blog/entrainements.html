@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Programmes d'Entraînement Stratégiques{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    body {
+        background-color: #0e1a24;
+        color: #ffffff;
+    }
+
+    header {
+        background-color: #1a2e3b;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        margin: 0;
+        color: #4ecdc4;
+    }
+
+    .filters {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .filters button {
+        margin: 5px;
+        padding: 10px 20px;
+        border: none;
+        background-color: #4ecdc4;
+        color: #000;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .filters button:hover {
+        background-color: #ffd166;
+    }
+
+    .section {
+        padding: 40px 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .card {
+        background-color: #1f2d3a;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .card-content h2 {
+        color: #ffd166;
+        font-size: 20px;
+    }
+
+    .card-content p {
+        color: #d3d3d3;
+        line-height: 1.5;
+    }
+
+    .card-clicked {
+        animation: clickBounce 0.4s ease;
+    }
+
+    @keyframes clickBounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.95); }
+        100% { transform: scale(1.03); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<header>
+    <h1>Programmes Stratégiques d’Entraînement</h1>
+    <p>Drone • Aviation • Patrouille Maritime • Opérations Spéciales</p>
+</header>
+
+<div class="filters">
+    <button onclick="filterCards('all')">Tous</button>
+    <button onclick="filterCards('drone')">Drones</button>
+    <button onclick="filterCards('patrouille')">Patrouille</button>
+    <button onclick="filterCards('forces')">Forces Spéciales</button>
+    <button onclick="filterCards('aviation')">Aviation</button>
+</div>
+
+<section class="section">
+
+    <div class="card" data-category="drone" onclick="redirectWithAnimation(this, '/entrainements/drones/')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2fWh2nHE1wrT1tiuwc8nL9c4NjFffXmV3Ng&s" alt="Drone militaire">
+        <div class="card-content">
+            <h2>Opérations de Drones</h2>
+            <p>Entraînement au pilotage de drones tactiques, surveillance ISR, frappes précises et furtives en zones sensibles.</p>
+        </div>
+    </div>
+
+    <div class="card" data-category="patrouille" onclick="redirectWithAnimation(this, '/entrainements/entrainements_patrouille_maritime/')">
+        <img src="https://tse4.mm.bing.net/th/id/OIP.1L24nQPOjl-qYOxaeWYY9wHaE1?rs=1&pid=ImgDetMain" alt="Avion patrouille maritime">
+        <div class="card-content">
+            <h2>Patrouille Maritime</h2>
+            <p>Maîtrise des ATL2, détection anti-sous-marine, patrouilles côtières, interceptions maritimes, appui naval.</p>
+        </div>
+    </div>
+
+    <div class="card" data-category="patrouille" onclick="redirectWithAnimation(this, '/entrainements/Drones_swarms/')">
+        <img src="https://tse3.mm.bing.net/th/id/OIP.-3xfdYqtOuLg4tBv4QmlXwHaEJ?r=0&rs=1&pid=ImgDetMain" alt="Drones swarms">
+        <div class="card-content">
+            <h2>A-Defender</h2>
+            <p>Essaims de drones pour des missions tactiques.</p>
+        </div>
+    </div>
+
+    <div class="card" data-category="forces" onclick="redirectWithAnimation(this, '/entrainements/Forces_speciales/')">
+        <img src="https://raids.fr/wp-content/uploads/2019/12/14_RAI402_Page_1_Image_0001-1024x582.jpg" alt="Forces spéciales">
+        <div class="card-content">
+            <h2>Forces Spéciales</h2>
+            <p>Techniques d’infiltration, extraction en zones hostiles, neutralisation silencieuse, opérations urbaines nocturnes.</p>
+        </div>
+    </div>
+
+    <div class="card" data-category="aviation" onclick="redirectWithAnimation(this, '/entrainements/Aviation_strategique/')">
+        <img src="https://aerocontact.b-cdn.net/public/img/aviaexpo/produits/images/361/detail_C295-1-900x636.jpg" alt="Aviation stratégique">
+        <div class="card-content">
+            <h2>Aviation Stratégique</h2>
+            <p>Formations en vol, ravitaillement en vol, coordination de chasse, surveillance radar et contre-mesures aériennes.</p>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterCards(category) {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        card.style.display = (category === 'all' || cat === category) ? 'block' : 'none';
+    });
+}
+
+function redirectWithAnimation(card, url) {
+    card.classList.add('card-clicked');
+    setTimeout(() => {
+        window.location.href = url;
+    }, 300);
+}
+</script>
+{% endblock %}

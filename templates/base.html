@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES - Votre partenaire pour l'excellence dans les études de défense et de sécurité">
+    <meta name="keywords" content="défense, sécurité, études, Sénégal, CSEGS, militaire, stratégie">
+    <meta name="author" content="CIAI">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="CIAI - CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES">
+    <meta property="og:description" content="Votre partenaire pour l'excellence dans les études de défense et de sécurité">
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <title>{% block title %}CIAI - CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #2c3e50;
+            --senegal-green: #008751;
+            --senegal-yellow: #fcd731;
+            --senegal-red: #CE1126;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(0, 135, 81, 0.1) 0%,
+                    rgba(252, 209, 22, 0.1) 50%,
+                    rgba(206, 17, 38, 0.1) 100%),
+                url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23008751' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 400% 400%, 60px 60px;
+            animation: gradientFlow 15s ease infinite;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .navbar {
+            background-color: rgba(8, 48, 87, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            animation: fadeInUp 0.5s ease-out;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .navbar-brand::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, 
+                var(--senegal-green) 0%,
+                var(--senegal-yellow) 50%,
+                var(--senegal-red) 100%);
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite, borderGlow 3s ease-in-out infinite;
+            border-radius: 0.5rem;
+            opacity: 0.1;
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand i {
+            color: var(--accent-color);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            transition: all 0.3s ease;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, 
+                var(--senegal-green),
+                var(--senegal-yellow),
+                var(--senegal-red));
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .navbar-brand i::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(90deg, 
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent);
+            background-size: 200% 100%;
+            animation: shine 3s infinite;
+            z-index: -1;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .text-accent {
+            background: linear-gradient(45deg, 
+                var(--senegal-green),
+                var(--senegal-yellow),
+                var(--senegal-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 0.25rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, 
+                var(--senegal-green),
+                var(--senegal-yellow),
+                var(--senegal-red));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 0.25rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-bg);
+            color: var(--accent-color);
+        }
+
+        .footer {
+            background-color: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 3rem 0;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(0, 135, 81, 0.1) 0%,
+                rgba(252, 209, 22, 0.1) 50%,
+                rgba(206, 17, 38, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            z-index: -1;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--accent-color);
+        }
+
+        .footer h5 {
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease-out;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 135, 81, 0.1),
+                rgba(252, 209, 22, 0.1),
+                rgba(206, 17, 38, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, 
+                var(--senegal-green),
+                var(--senegal-yellow),
+                var(--senegal-red));
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+            border: none;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent,
+                rgba(255,255,255,0.2),
+                transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            animation: fadeInUp 0.5s ease-out;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, 
+                rgba(0, 135, 81, 0.1),
+                rgba(252, 209, 22, 0.1),
+                rgba(206, 17, 38, 0.1));
+            backdrop-filter: blur(10px);
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #c0392b;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--secondary-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Nouvelles animations */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: -100% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        @keyframes borderGlow {
+            0% {
+                box-shadow: 0 0 5px rgba(0, 135, 81, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(252, 209, 22, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(206, 17, 38, 0.5);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-brand small {
+                display: none;
+            }
+
+            .footer {
+                text-align: center;
+            }
+
+            .footer .text-md-end {
+                text-align: center !important;
+                margin-top: 1.5rem;
+            }
+
+            .navbar-brand i {
+                font-size: 2rem;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'blog:home' %}">
+                <i class="fas fa-shield-alt fa-2x text-accent me-2"></i>
+                <span class="text-accent">CIAI</span>
+                <small class="d-none d-md-inline" style="font-size: 0.9rem; margin-left: 10px;">
+                    CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES
+                </small>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:article_list' %}">
+                            <i class="fas fa-book-open me-1"></i>Publications
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:article_create' %}">
+                            <i class="fas fa-plus-circle me-1"></i>Nouvelle Publication
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:contact' %}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:entrainements' %}">
+                            <i class="fas fa-envelope me-1"></i>entrainements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:chatbox' %}">
+                            <i class="fas fa-envelope me-1"></i>Groupe chat
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'blog:profile' %}">Mon Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'blog:logout' %}">Déconnexion</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:signup' %}">Inscription</a>
+                    </li>                    
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show fade-in" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>CENTRE D'INTELLIGENCE ET D'AFFAIRES INTERNATIONALES</h5>
+                    <p>Votre partenaire pour l'excellence dans les études de défense et de sécurité</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens Rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'blog:article_list' %}">Publications</a></li>
+                        <li><a href="{% url 'blog:contact' %}">Contact</a></li>
+                        <li><a href="{% url 'blog:about' %}">À Propos</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i>contact@CIAI.sn</li>
+                        <li><i class="fas fa-phone me-2"></i>+221 XX XXX XX XX</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">© {% now "Y" %} CIAI. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-accent me-3"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-accent me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-accent"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

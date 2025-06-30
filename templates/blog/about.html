@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}À Propos - CIAI{% endblock %}
+
+{% block content %}
+<div class="about-hero position-relative">
+    <div class="overlay"></div>
+    <div class="particles"></div>
+    <div class="container position-relative py-5">
+        <div class="row">
+            <div class="col-12 text-center text-white">
+                <div class="logo-container mb-4">
+                    <i class="fas fa-shield-alt fa-4x text-accent"></i>
+                </div>
+                <h1 class="display-4 mb-3 fw-bold animate-text">À Propos du CIAI</h1>
+                <p class="lead animate-text-delay">Centre d'intelligence et d'affaires internationales</p>
+                <div class="d-flex justify-content-center gap-3 mt-4 animate-badges">
+                    <span class="badge bg-success p-2 glow-effect">Excellence</span>
+                    <span class="badge bg-warning p-2 glow-effect">Innovation</span>
+                    <span class="badge bg-danger p-2 glow-effect">Leadership</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Mission et Vision -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm hover-card animate-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-bullseye fa-2x text-success"></i>
+                        </div>
+                        <h2 class="h3 mb-0">Notre Mission</h2>
+                    </div>
+                    <p class="card-text">
+                        Le CSEGS s'engage à promouvoir l'excellence dans les études de défense et de sécurité au Sénégal. 
+                        Notre mission est de contribuer au développement des connaissances et des compétences dans ces domaines 
+                        critiques pour la stabilité et le développement de notre nation.
+                    </p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2 animate-list-item"><i class="fas fa-check-circle text-success me-2"></i>Formation de qualité</li>
+                        <li class="mb-2 animate-list-item"><i class="fas fa-check-circle text-success me-2"></i>Recherche approfondie</li>
+                        <li class="animate-list-item"><i class="fas fa-check-circle text-success me-2"></i>Expertise reconnue</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-0 shadow-sm hover-card animate-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-eye fa-2x text-warning"></i>
+                        </div>
+                        <h2 class="h3 mb-0">Notre Vision</h2>
+                    </div>
+                    <p class="card-text">
+                        Nous aspirons à devenir un centre d'excellence reconnu internationalement, 
+                        contribuant significativement à la recherche et à la formation dans les domaines 
+                        de la défense et de la sécurité en Afrique.
+                    </p>
+                    <div class="progress mt-4 animate-progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: 25%"></div>
+                        <div class="progress-bar bg-warning" style="width: 25%"></div>
+                        <div class="progress-bar bg-danger" style="width: 25%"></div>
+                        <div class="progress-bar bg-info" style="width: 25%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nos Objectifs -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-body p-4">
+                    <h2 class="h3 mb-4 text-center">Nos Objectifs</h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="icon-circle bg-primary bg-opacity-10 p-3 me-3">
+                                    <i class="fas fa-graduation-cap fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">Formation</h3>
+                                    <p class="mb-0">Développer des programmes de formation de qualité pour les professionnels de la défense et de la sécurité.</p>
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary animate-badge">Master</span>
+                                        <span class="badge bg-primary animate-badge">Doctorat</span>
+                                        <span class="badge bg-primary animate-badge">Formation continue</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="icon-circle bg-info bg-opacity-10 p-3 me-3">
+                                    <i class="fas fa-book fa-2x text-info"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">Recherche</h3>
+                                    <p class="mb-0">Conduire des recherches approfondies sur les enjeux de défense et de sécurité.</p>
+                                    <div class="mt-3">
+                                        <span class="badge bg-info animate-badge">Publications</span>
+                                        <span class="badge bg-info animate-badge">Conférences</span>
+                                        <span class="badge bg-info animate-badge">Projets</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="icon-circle bg-success bg-opacity-10 p-3 me-3">
+                                    <i class="fas fa-handshake fa-2x text-success"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h5 mb-2">Coopération</h3>
+                                    <p class="mb-0">Établir des partenariats stratégiques avec des institutions nationales et internationales.</p>
+                                    <div class="mt-3">
+                                        <span class="badge bg-success animate-badge">Partenariats</span>
+                                        <span class="badge bg-success animate-badge">Échanges</span>
+                                        <span class="badge bg-success animate-badge">Collaborations</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notre Équipe -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h3 mb-4 text-center">Notre Équipe</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 hover-card animate-card">
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-3">
+                                <div class="avatar-circle mx-auto">
+                                    <i class="fas fa-user-circle fa-4x text-accent"></i>
+                                </div>
+                            </div>
+                            <h3 class="h5 mb-2">Dr. [Col. Cissokho]</h3>
+                            <p class="text-muted mb-3">Directeur</p>
+                            <p class="card-text">Expert en stratégie militaire avec plus de 20 ans d'expérience.</p>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 animate-button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm animate-button">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 hover-card animate-card">
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-3">
+                                <div class="avatar-circle mx-auto">
+                                    <i class="fas fa-user-circle fa-4x text-accent"></i>
+                                </div>
+                            </div>
+                            <h3 class="h5 mb-2">Dr. [Nom]</h3>
+                            <p class="text-muted mb-3">Directeur de la Recherche</p>
+                            <p class="card-text">Spécialiste en sécurité internationale et relations diplomatiques.</p>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 animate-button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm animate-button">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 hover-card animate-card">
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-3">
+                                <div class="avatar-circle mx-auto">
+                                    <i class="fas fa-user-circle fa-4x text-accent"></i>
+                                </div>
+                            </div>
+                            <h3 class="h5 mb-2">Dr. [Nom]</h3>
+                            <p class="text-muted mb-3">Directeur des Formations</p>
+                            <p class="card-text">Expert en formation militaire et en pédagogie.</p>
+                            <div class="mt-3">
+                                <a href="#" class="btn btn-outline-primary btn-sm me-2 animate-button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm animate-button">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm animate-card">
+                <div class="card-body p-4 text-center">
+                    <h2 class="h3 mb-4">Contactez-nous</h2>
+                    <p class="lead mb-4">Pour plus d'informations sur nos programmes et activités</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'blog:contact' %}" class="btn btn-primary btn-lg animate-button">
+                            <i class="fas fa-envelope me-2"></i>Nous Contacter
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-lg animate-button">
+                            <i class="fas fa-download me-2"></i>Brochure
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-hero {
+        background-image: url('https://th.bing.com/th/id/OIP.yZjGL_fJ0_y__iD5-HvAbAHaEL?rs=1&pid=ImgDetMain');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+            rgba(0, 0, 0, 0.8),
+            rgba(0, 0, 0, 0.6));
+    }
+
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: particleMove 20s linear infinite;
+    }
+
+    .logo-container {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .logo-container i {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    }
+
+    .scroll-indicator {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 24px;
+        animation: bounce 2s infinite;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .scroll-indicator:hover {
+        transform: translateX(-50%) scale(1.2);
+    }
+
+    .icon-circle {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .icon-circle::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+        );
+        transform: rotate(45deg);
+        transition: 0.5s;
+    }
+
+    .icon-circle:hover::after {
+        transform: rotate(45deg) translate(50%, 50%);
+    }
+
+    .icon-circle:hover {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, 
+            var(--senegal-green),
+            var(--senegal-yellow),
+            var(--senegal-red));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-circle::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, 
+            var(--senegal-green),
+            var(--senegal-yellow),
+            var(--senegal-red));
+        z-index: -1;
+        border-radius: 50%;
+        animation: borderRotate 4s linear infinite;
+    }
+
+    .avatar-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    .hover-card {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hover-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.5s;
+    }
+
+    .hover-card:hover::before {
+        transform: translateX(100%);
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 1em;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .badge.glow-effect {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Animations */
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-20px);
+        }
+        60% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes particleMove {
+        0% {
+            background-position: 0 0;
+        }
+        100% {
+            background-position: 100px 100px;
+        }
+    }
+
+    @keyframes borderRotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .animate-text {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .animate-text-delay {
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .animate-badges {
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .animate-card {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .animate-list-item {
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .animate-badge {
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .animate-button {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .animate-button::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transform: rotate(45deg);
+        transition: 0.5s;
+    }
+
+    .animate-button:hover::after {
+        transform: rotate(45deg) translate(50%, 50%);
+    }
+
+    .animate-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .animate-progress {
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero {
+            min-height: 40vh;
+        }
+        
+        .particles {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (scrollIndicator) {
+        scrollIndicator.addEventListener('click', function() {
+            window.scrollTo({
+                top: document.querySelector('.container').offsetTop,
+                behavior: 'smooth'
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Articles tagués "{{ tag.name }}" - CSEGS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'blog:article_list' %}">Publications</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tag: {{ tag.name }}</li>
+            </ol>
+        </nav>
+        <h1>Articles tagués "{{ tag.name }}"</h1>
+        <p class="lead">{{ tag.articles.count }} article(s) trouvé(s)</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Liste des articles -->
+        <div class="col-lg-8">
+            {% if articles %}
+                <div class="row">
+                    {% for article in articles %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                {% if article.image %}
+                                    <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{{ article.get_absolute_url }}" class="text-decoration-none">{{ article.title }}</a>
+                                    </h5>
+                                    <p class="card-text">{{ article.content|truncatewords:30 }}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar-alt me-1"></i>{{ article.created_at|date:"d/m/Y" }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="far fa-user me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Aucun article n'a été trouvé avec ce tag.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Recherche -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Rechercher</h5>
+                    <form action="{% url 'blog:article_list' %}" method="get" class="d-flex">
+                        <input type="text" name="q" class="form-control me-2" placeholder="Rechercher un article...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tags similaires -->
+            {% if similar_tags %}
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Tags similaires</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for similar in similar_tags %}
+                                <a href="{% url 'blog:tag_detail' similar.slug %}" 
+                                   class="badge bg-primary text-decoration-none {% if similar == tag %}bg-secondary{% endif %}">
+                                    #{{ similar.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Catégories -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Catégories</h5>
+                    <div class="list-group list-group-flush">
+                        {% for category in categories %}
+                            <a href="{% url 'blog:category_detail' category.slug %}" 
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                {{ category.name }}
+                                <span class="badge bg-primary rounded-pill">{{ category.articles.count }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
